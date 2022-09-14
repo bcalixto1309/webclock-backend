@@ -147,6 +147,8 @@ app.post("/clock", (request, response) => {
   // create a new user instance and collect the data
   const clock = new Clock({
     user: request.body.user,
+    name: request.body.name,
+    store: request.body.store,
     type: request.body.punchType,
     location: request.body.location || {},
   });
