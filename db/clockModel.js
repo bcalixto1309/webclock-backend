@@ -9,6 +9,20 @@ const ClockSchema = new mongoose.Schema({
     unique: false,
   },
 
+  // name type
+  name: {
+    type: String,
+    required: [true, "Invalid name"],
+    unique: false,
+  },
+
+  //  location field
+  store: {
+    type: String,
+    required: [true, "Invalid store"],
+    unique: false,
+  },
+
   // punch type
   type: {
     type: String,
