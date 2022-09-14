@@ -143,7 +143,7 @@ app.get("/auth-endpoint", auth, (request, response) => {
 });
 
 // clock endpoint
-app.post("/clock-punch", (request, response) => {
+app.post("/clock", (request, response) => {
   // create a new user instance and collect the data
   const clock = new Clock({
     user: request.body.user,
@@ -169,8 +169,62 @@ app.post("/clock-punch", (request, response) => {
     })
 });
 
+// get all employees endpoint
+app.get("/clock", (request, response, next) => {
+  Clock
+    .find()
+    .then((records) => {
+      response.json(records);
+      next();
+    })
+    .catch(error => next(error))
+});
+
+// get employee endpoint
+app.get("/clock/:id", (request, response, next) => {
+  Clock
+    .find({ user: request.params.id })
+    .then((records) => {
+      response.json(records);
+      next();
+    })
+    .catch(error => next(error))
+});
+
+// get all employees endpoint
+app.get("/employees", (request, response, next) => {
+  Employee
+    .find()
+    .then((employees) => {
+      response.json(employees);
+      next();
+    })
+    .catch((error) => {
+      response.status(500).send({
+        message: "Error fetching employees",
+        error,
+      })
+    })
+});
+
+// get employee endpoint
+app.get("/employees/:id", (request, response, next) => {
+  Employee
+    .findOne({ user: request.params.id, employeeStatus: true })
+    .then((employee) => {
+      response.json(employee);
+      next();
+    })
+    .catch((error) => {
+      response.status(400).send({
+        message: "Error employee not found",
+        error,
+      })
+    })
+});
+
 // create employee endpoint
-app.post("/create/employee", (request, response) => {
+app.post("/employees/create", (request, response) => {
   const employee = new Employee({
     user: request.body.user,
     name: request.body.name,
@@ -196,37 +250,8 @@ app.post("/create/employee", (request, response) => {
     })
 });
 
-app.get("/employees", (request, response, next) => {
-  Employee
-    .find()
-    .then((employees) => {
-      response.json(employees);
-      next();
-    })
-    .catch((error) => {
-      response.status(500).send({
-        message: "Error fetching employees",
-        error,
-      })
-    })
-});
-
-app.get("/employee/:id", (request, response, next) => {
-  Employee
-    .findOne({ user: request.params.id, employeeStatus: true })
-    .then((employee) => {
-      response.json(employee);
-      next();
-    })
-    .catch((error) => {
-      response.status(400).send({
-        message: "Error employee not found",
-        error,
-      })
-    })
-});
-
-app.delete("/employee/:id", (request, response, next) => {
+// delete employee endpoint
+app.delete("/employees/:id", (request, response, next) => {
   Employee
     .findByIdAndRemove(request.params.id)
     .then(result => {
@@ -235,7 +260,8 @@ app.delete("/employee/:id", (request, response, next) => {
     .catch(error => next(error))
 });
 
-app.put("/employee/:id", (request, response, next) => {
+// update employee endpoint
+app.put("/employees/:id", (request, response, next) => {
   const body = request.body
   console.log(request.params.id);
   const employee = {
